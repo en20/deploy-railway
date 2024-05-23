@@ -1,0 +1,10 @@
+# environment variables
+.env 
+.env.example
+
+# Docker files
+Dockerfile
+docker-compose.yml
+
+# Python environment
+.venv
