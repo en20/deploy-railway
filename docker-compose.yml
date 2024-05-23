@@ -1,0 +1,47 @@
+version: "3.1"
+
+services:
+  api:
+    image: django-api
+    container_name: autobots-backend
+    build: ./backend/
+    env_file: ./backend/.env
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_HOST: postgres
+    volumes:
+      - api:/usr/src/app
+    depends_on:
+      - postgres
+      - redis
+  redis:
+    image: redis:7.2.1-alpine
+    container_name: autobots-redis
+
+  postgres:
+    image: postgres
+    container_name: autobots-postgres
+    env_file: ./backend/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - api:/var/lib/postgresql
+
+  frontend:
+    image: next-frontend
+    container_name: autobots-frontend 
+    build:
+      args:
+        NEXT_PUBLIC_URL: ${NEXT_PUBLIC_URL:-http://localhost:3000}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+
+volumes:
+  server:
+    external: false
+  api:
+    external: false
